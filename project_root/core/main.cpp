@@ -3,25 +3,12 @@
 #include "../core/modules/scene_renderer/scene_manager.h"
 #include "../core/modules/scene_renderer/scene_renderer.h"
 #include "../core/nova.h"
-#include "modules/sound_fx/sound_fx.h"
-#include "../visuals/visual.h"
-#include "utils/performance/performance.h"
-
-// Function declarations for sound effects
-void playFootstepSound() {
-    // Implementation for playing footstep sound
-    std::cout << "Playing footstep sound..." << std::endl;
-}
-
-void playJumpSound() {
-    // Implementation for playing jump sound
-    std::cout << "Playing jump sound..." << std::endl;
-}
-
-void playTalkingSound() {
-    // Implementation for playing talking sound
-    std::cout << "Playing talking sound..." << std::endl;
-}
+#include "../modules/video_generator/video_generator.h"
+#include "../modules/story_processor/processor.h"
+#include "../utils/performance/performance.h"
+#include <iostream>
+#include <vector>
+#include <string>
 
 int main() {
     Performance::measureExecutionTime([]() {
@@ -32,32 +19,26 @@ int main() {
         Robot robot;
         Human human;
 
-        // Initialize scene manager and create some scenes
+        // Initialize scene manager and video generator
         SceneManager sceneManager;
         SceneRenderer sceneRenderer;
+        VideoGenerator videoGen("output.mp4");
+
+        // Process the story to generate scenes
+        StoryProcessor storyProcessor("story/dialogues/dialogue1.txt");
+        std::vector<std::string> scenes = storyProcessor.processStory();
 
         // Create and render scenes
-        std::vector<std::string> scenes = {"Running Scene", "Jumping Scene", "Talking Scene"};
         for (const auto& sceneName : scenes) {
             sceneManager.createScene(sceneName);
-            sceneRenderer.renderScene(sceneName);
+            std::string frameFilename = "frame" + std::to_string(&sceneName - &scenes[0]) + ".ppm";
+            sceneRenderer.renderScene(sceneName, frameFilename);
+            videoGen.saveFrame(frameFilename);
             nova.observeScene(sceneName);
-
-            // Simulate character actions and sound effects
-            if (sceneName == "Running Scene") {
-                robot.run();
-                human.run();
-                playFootstepSound();
-            } else if (sceneName == "Jumping Scene") {
-                robot.jump();
-                human.jump();
-                playJumpSound();
-            } else if (sceneName == "Talking Scene") {
-                robot.talk();
-                human.talk();
-                playTalkingSound();
-            }
         }
+
+        // Generate video from frames
+        videoGen.generateVideo();
     });
 
     return 0;
