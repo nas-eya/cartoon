@@ -1,0 +1,28 @@
+{
+  "project_id": "cartoon_001",
+  "title": "Test Mission",
+  "style": "cyberpunk",
+  "characters": [
+    {
+      "id": "hero_1",
+      "name": "Nova",
+      "description": "smart calm futuristic guide"
+    }
+  ],
+  "scenes": [
+    {
+      "id": 1,
+      "name": "Arrival",
+      "description": "Hero enters the neon city at night"
+    },
+    {
+      "id": 2,
+      "name": "Planning",
+      "description": "Hero prepares for the mission in a dark room"
+    }
+  ],
+  "output": {
+    "preview_mode": true,
+    "video_file": "output.mp4"
+  }
+}
